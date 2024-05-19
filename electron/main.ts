@@ -1,9 +1,9 @@
-import { app, BrowserWindow } from 'electron'
-import serve from "electron-serve"
+import { app, BrowserWindow } from 'electron';
+import serve from "electron-serve";
 
 const loadURL = serve({directory:"build", file:"app"})
 
-app.whenReady().then(() => {
+function createWindow () {
   const win = new BrowserWindow({
     title: 'Main window',
   })
@@ -14,4 +14,18 @@ app.whenReady().then(() => {
   } else {
     loadURL(win)
   }
-})
+}
+
+app.whenReady().then(createWindow);
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+});
+
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow()
+  }
+});
